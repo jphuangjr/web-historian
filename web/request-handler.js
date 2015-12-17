@@ -10,7 +10,6 @@ exports.handleRequest = function(req, res) {
     if (req.url === "/") {
       http.serveAssets(res, '/index.html', function(data) {
         res.writeHead(statusCode, http.headers);
-        archive.downloadUrls(["www.google.com", "yahoo.com"]);
         res.end(data);
       });
     }

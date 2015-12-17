@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var request = require('request');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -29,8 +30,7 @@ exports.readListOfUrls = function(callback) {
   fs.readFile(exports.paths.list, 'utf8', function(err, data) {
     if (err) {
       console.log('error reading URLs');
-    }
-    else {
+    } else {
       var websites = data.toString().split("\n");
       callback(websites);
     }
@@ -38,22 +38,64 @@ exports.readListOfUrls = function(callback) {
 
 };
 
-exports.isUrlInList = function(url) {
+exports.isUrlInList = function(url, callback) {
   var urls = this.readListOfUrls();
+  callback(_.contains(urls, url));
+};
+
+exports.addUrlToList = function(url, callback) {
+  var newList = this.readListOfUrls(function(websites) {
+    websites.push(url);
+    fs.appendFile(exports.paths.list + "/sites.txt", url + "\n", function(err) {
+      if (err) {console.log("hi");
+      }
+    });  
+  });
+  
+  
+  callback(newList);
+};
+
+exports.isUrlArchived = function(url, callback) {
   var bool = false;
-  _.each(urls, function(value){
-    if(value === url){
-      bool = true
+  fs.exists(exports.paths.archivedSites + "/" + url, function(exists) {
+    if (exists) {
+      bool = true;
+    } else {
+      bool = false;
     }
-  })
-  return bool;
+  });
+  callback(bool);
 };
 
-exports.addUrlToList = function() {
+exports.downloadUrls = function(websitesCheck) {
+  var needToBeDownloaded = [];
+
+  //Builds the array of websites we don't have
+  _.each(websitesCheck, function(website) {
+    //isURLArchived on each website
+    exports.isUrlArchived(website, function(bool) {
+      if (!bool) {
+        needToBeDownloaded.push(website);
+      }
+    });
+  });
+  _.each(needToBeDownloaded, function(website) {
+    request("http://" + website, function(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        fs.writeFile(exports.paths.archivedSites + "/" + website, body, function(err) {
+          if (err) return console.log(err);
+        });
+      }
+    });
+  });
+  
+  for (var i = 0; i < needToBeDownloaded.length; i++) {
+   fs.appendFile(exports.paths.archivedSites + "/sites.txt", needToBeDownloaded[i] + "\n", function(err) {
+      if (err) {console.log("hi");
+      }
+    });
+  }
 };
 
-exports.isUrlArchived = function() {
-};
-
-exports.downloadUrls = function() {
-};
+// };
