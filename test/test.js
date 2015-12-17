@@ -10,7 +10,8 @@ initialize(path.join(__dirname, '/testdata'));
 
 archive.initialize({
   archivedSites: path.join(__dirname, '/testdata/sites'),
-  list: path.join(__dirname, "/testdata/sites.txt")
+  list: path.join(__dirname, "/testdata/sites.txt"),
+  archivedSitesList: path.join(__dirname, '/testdata/sites/sites.txt')
 });
 
 var request = supertest.agent(server);
@@ -145,7 +146,7 @@ describe("archive helpers", function(){
 
   describe("#downloadUrls", function () {
     it("should download all pending urls in the list", function (done) {
-      var urlArray = ["www.example.com", "www.google.com"];
+      var urlArray = ["www.yahoo.com", "www.google.com"];
       archive.downloadUrls(urlArray);
 
       // Ugly hack to wait for all downloads to finish.

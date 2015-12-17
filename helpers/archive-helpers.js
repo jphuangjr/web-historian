@@ -13,7 +13,8 @@ var request = require('request');
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
-  list: path.join(__dirname, '../archives/sites.txt')
+  list: path.join(__dirname, '../archives/sites.txt'),
+  archivedSitesList: path.join(__dirname, '../web/archives/sites.txt')
 };
 
 // Used for stubbing paths for tests, do not modify
@@ -39,21 +40,26 @@ exports.readListOfUrls = function(callback) {
 };
 
 exports.isUrlInList = function(url, callback) {
-  var urls = this.readListOfUrls();
-  callback(_.contains(urls, url));
+
+  this.readListOfUrls(function(websites){
+    callback(_.contains(websites, url));
+  });
+
 };
 
 exports.addUrlToList = function(url, callback) {
-  var newList = this.readListOfUrls(function(websites) {
+  exports.readListOfUrls(function(websites) {
+
     websites.push(url);
-    fs.appendFile(exports.paths.list + "/sites.txt", url + "\n", function(err) {
+    console.log("websites", websites)
+    fs.appendFile(exports.paths.list , websites.join("\n"), function(err) {
       if (err) {console.log("hi");
+      } else {
+        callback(websites);
       }
     });  
   });
-  
-  
-  callback(newList);
+
 };
 
 exports.isUrlArchived = function(url, callback) {
@@ -80,9 +86,14 @@ exports.downloadUrls = function(websitesCheck) {
       }
     });
   });
+  console.log(needToBeDownloaded)
   _.each(needToBeDownloaded, function(website) {
     request("http://" + website, function(error, response, body) {
       if (!error && response.statusCode == 200) {
+        fs.appendFile(exports.paths.archivedSitesList , website + "\n", function(err) {
+          if (err) {console.log("hi");
+          }
+        });
         fs.writeFile(exports.paths.archivedSites + "/" + website, body, function(err) {
           if (err) return console.log(err);
         });
@@ -90,12 +101,12 @@ exports.downloadUrls = function(websitesCheck) {
     });
   });
   
-  for (var i = 0; i < needToBeDownloaded.length; i++) {
-   fs.appendFile(exports.paths.archivedSites + "/sites.txt", needToBeDownloaded[i] + "\n", function(err) {
-      if (err) {console.log("hi");
-      }
-    });
-  }
+  //for (var i = 0; i < needToBeDownloaded.length; i++) {
+  // fs.appendFile(exports.paths.archivedSites + "/sites.txt", needToBeDownloaded[i] + "\n", function(err) {
+  //    if (err) {console.log("hi");
+  //    }
+  //  });
+  //}
 };
 
 // };
