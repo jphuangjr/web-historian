@@ -14,7 +14,7 @@ exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
   list: path.join(__dirname, '../archives/sites.txt'),
-  archivedSitesList: path.join(__dirname, '../web/archives/sites.txt')
+  archivedSitesList: path.join(__dirname, '../archives/sites.txt')
 };
 
 // Used for stubbing paths for tests, do not modify
@@ -51,7 +51,6 @@ exports.addUrlToList = function(url, callback) {
   exports.readListOfUrls(function(websites) {
 
     websites.push(url);
-    console.log("websites", websites)
     fs.appendFile(exports.paths.list , websites.join("\n"), function(err) {
       if (err) {console.log("hi");
       } else {
@@ -86,7 +85,7 @@ exports.downloadUrls = function(websitesCheck) {
       }
     });
   });
-  console.log(needToBeDownloaded)
+  console.log(needToBeDownloaded);
   _.each(needToBeDownloaded, function(website) {
     request("http://" + website, function(error, response, body) {
       if (!error && response.statusCode == 200) {

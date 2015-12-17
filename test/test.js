@@ -11,7 +11,7 @@ initialize(path.join(__dirname, '/testdata'));
 archive.initialize({
   archivedSites: path.join(__dirname, '/testdata/sites'),
   list: path.join(__dirname, "/testdata/sites.txt"),
-  archivedSitesList: path.join(__dirname, '/testdata/sites/sites.txt')
+  archivedSitesList: path.join(__dirname, '/testdata/sites.txt')
 });
 
 var request = supertest.agent(server);
@@ -27,7 +27,7 @@ describe("server", function() {
   });
 
   describe("archived websites", function () {
-    xdescribe("GET", function () {
+    describe("GET", function () {
       it("should return the content of a website from the archive", function (done) {
         var fixtureName = "www.google.com";
         var fixturePath = archive.paths.archivedSites + "/" + fixtureName;
@@ -54,7 +54,7 @@ describe("server", function() {
     });
 
     describe("POST", function () {
-      xit("should append submitted sites to 'sites.txt'", function(done) {
+      it("should append submitted sites to 'sites.txt'", function(done) {
         var url = "www.example.com";
 
         // Reset the test file and process request
