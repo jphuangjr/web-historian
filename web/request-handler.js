@@ -8,6 +8,9 @@ exports.handleRequest = function(req, res) {
   if (req.method === "GET") {
     statusCode = 200;
     if (req.url === "/") {
+      console.log("in index")
+      archive.downloadUrls(["www.google.com", "wwww.facebook.com", "www.yahoo.com"])
+
       http.serveAssets(res, '/index.html', function(data) {
         res.writeHead(statusCode, http.headers);
         res.end(data);
