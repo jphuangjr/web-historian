@@ -1,7 +1,7 @@
 var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var http = require('./http-helpers');
-var url = require('url')
+var url = require('url');
 
 exports.handleRequest = function(req, res) {
   if (req.method === "GET") {

@@ -3,6 +3,7 @@
 var archive = require("../helpers/archive-helpers");
 
 var download = function() {
+  // console.log("downloaded")
   archive.readListOfUrls(function(data) {
     archive.downloadUrls(data);
     console.log(data);
